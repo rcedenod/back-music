@@ -38,8 +38,7 @@ const UserBO = class {
         // Insertar la persona en la tabla public.person
         const personResult = await database.executeQuery("public", "createPerson", [
           name,
-          lastName,
-          birthDate
+          lastName
         ]);
         if (!personResult || !personResult.rows || personResult.rows.length === 0) {
           console.error("No se pudo crear la persona");

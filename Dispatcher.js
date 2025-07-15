@@ -31,9 +31,8 @@ global.database = new (require('./DataBase'))(() => {global.sc = new (require('.
     }
     
     // Buscar los perfiles del usuario
-    let profileResults = await database.executeQuery("security", "getUserProfiles", [ss.sessionObject.userName]);
+    let profileResults = await database.executeQuery("security", "getUserProfiles", [ss.sessionObject.email]);
     
-
     if (!profileResults || !profileResults.rows || profileResults.rows.length === 0) {
         return res.status(403).json({ sts: false, msg: "No tienes perfiles asignados" });
     }
@@ -52,7 +51,7 @@ global.database = new (require('./DataBase'))(() => {global.sc = new (require('.
 
     // Si solo tiene un perfil, iniciamos sesión directamente
     ss.createSession(req, profileResults.rows[0].fk_id_profile);
-    console.log(`El usuario ${req.body.userName} inició sesión con el perfil ${profileResults.rows[0].profile}`);
+    console.log(`${req.body.email} inició sesión con el perfil ${profileResults.rows[0].profile}`);
 
     res.json({
         sts: true,
@@ -69,7 +68,7 @@ global.database = new (require('./DataBase'))(() => {global.sc = new (require('.
     }
 
     // Verificamos si el perfil pertenece al usuario autenticado
-    let profileResults = await database.executeQuery("security", "getUserProfiles", [ss.sessionObject.userName]);
+    let profileResults = await database.executeQuery("security", "getUserProfiles", [ss.sessionObject.email]);
     const validProfile = profileResults.rows.find(row => row.fk_id_profile === id_profile);
 
     if (!validProfile) {
@@ -78,7 +77,7 @@ global.database = new (require('./DataBase'))(() => {global.sc = new (require('.
 
     // Creamos la sesión con el perfil seleccionado
     ss.createSession(req, id_profile);
-    console.log(`El usuario ${ss.sessionObject.userName} seleccionó el perfil ${validProfile.profile}`);
+    console.log(`El usuario ${ss.sessionObject.email} seleccionó el perfil ${validProfile.profile}`);
 
     res.json({
         sts: true,
@@ -101,8 +100,8 @@ global.database = new (require('./DataBase'))(() => {global.sc = new (require('.
 app.post('/createUser', async (req, res) => {
   try {
     // 1) Validación de campos obligatorios
-    const { name, last_name, birth_date, email, password, userName } = req.body;
-    if (!name || !last_name || !birth_date || !email || !password || !userName) {
+    const { name, last_name, email, password, userName } = req.body;
+    if (!name || !last_name || !email || !password || !userName) {
       return res
         .status(400)
         .json({ sts: false, msg: 'Faltan datos obligatorios' });
@@ -112,7 +111,7 @@ app.post('/createUser', async (req, res) => {
     const personResult = await database.executeQuery(
       'public',
       'createPerson',
-      [name, last_name, birth_date]
+      [name, last_name]
     );
     if (
       !personResult ||
@@ -201,14 +200,14 @@ app.post('/createUser', async (req, res) => {
     try {
       const { email } = req.body;
       if (!email) {
-        return res.status(400).json({ sts: false, msg: "Falta el email" });
+        return res.status(400).json({ sts: false, msg: "El campo email es obligatorio." });
       }
 
       if (email.length > maxEmailLength) {
-        return res.status(400).json({ sts: false, msg: "Email muy largo" });
+        return res.status(400).json({ sts: false, msg: "Email demasiado largo." });
       }
       if (!emailRegex.test(email)) {
-        return res.status(400).json({ sts: false, msg: "Email invalido" });
+        return res.status(400).json({ sts: false, msg: "Email inválido." });
       }
 
       let userCheck = await database.executeQuery("security", "getUserByEmail", [email]);
