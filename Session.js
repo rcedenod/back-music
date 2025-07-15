@@ -48,6 +48,9 @@ const Session = class {
                     this.sessionObject.userId = response.rows[0].id_user;
                     this.sessionObject.email = response.rows[0].email;
                     this.sessionObject.profile = response.rows[0].fk_id_profile;
+                    this.sessionObject.name = response.rows[0].name;
+                    this.sessionObject.lastName = response.rows[0].last_name;
+                    this.sessionObject.userName = response.rows[0].username;
                     this.sessionObject.status = true;
                     
                 } else {
@@ -68,6 +71,9 @@ const Session = class {
             if (this.sessionObject.status) {
                 req.session.userId = this.sessionObject.userId;
                 req.session.email = this.sessionObject.email;
+                req.session.name = this.sessionObject.name;
+                req.session.lastName = this.sessionObject.lastName;
+                req.session.userName = this.sessionObject.userName;
                 req.session.profile = id_profile;
                 return true;
             } else {

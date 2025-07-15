@@ -1,6 +1,6 @@
 {   
     "public": {
-        "getUser" : "select us.id_user, us.email, us.password, pr.fk_id_profile from security.user us INNER JOIN security.user_profile pr ON us.id_user = pr.fk_id_user where us.email = $1",
+        "getUser" : "select us.id_user, us.email, us.username, us.password, pr.fk_id_profile, per.name, per.last_name from security.user us INNER JOIN security.user_profile pr ON us.id_user = pr.fk_id_user inner join person as per on per.id_person = us.fk_id_person where us.email = $1",
         "createPerson" : "INSERT INTO public.person (name, last_name) VALUES ($1, $2) RETURNING id_person",
         "getPeople": "SELECT p.id_person, p.name, p.last_name, CONCAT(p.name, ' ', p.last_name) AS fullname FROM person as p",
         "updatePerson": "UPDATE public.person SET name = $1, last_name = $2 WHERE id_person = $3",
