@@ -66,6 +66,9 @@
             "getUsers": "SELECT us.id_user, pe.id_person,pe.name, pe.last_name, us.email, pr.profile, pr.id_profile, pe.birth_date, us.number_id FROM security.user us INNER JOIN public.person pe ON pe.id_person = us.fk_id_person INNER JOIN security.user_profile uspr ON uspr.fk_id_user = us.id_user INNER JOIN security.profile pr ON pr.id_profile = uspr.fk_id_profile",
             "createUserProfile": "INSERT INTO security.user_profile (fk_id_user, fk_id_profile) VALUES ($1, $2)",
             "updateUser": "UPDATE security.user SET email = $1, password = $2, username = $3 WHERE id_user = $4",
+
+            "updateUserName": "UPDATE security.user SET username = $1 WHERE id_user = $2",
+
             "updateUserProfile": "UPDATE security.user_profile SET fk_id_profile = $1 WHERE fk_id_user = $2",
             "deleteUserProfileByUserId": "DELETE FROM security.user_profile WHERE fk_id_user = $1",
             "deleteUser": "DELETE FROM security.user WHERE id_user = $1",

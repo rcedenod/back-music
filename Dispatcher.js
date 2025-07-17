@@ -21,7 +21,7 @@ global.database = new (require('./DataBase'))(() => {global.sc = new (require('.
 
   app.post('/login', async (req, res) => {
     if (ss.sessionExist(req)) {
-        return res.status(400).send('Ya tienes una sesión activa');
+        return res.status(400).json({ sts: true, msg: "Ya tienes una sesion activa" });
     }
 
     await ss.authenticateUser(req);

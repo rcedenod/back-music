@@ -125,6 +125,33 @@ const UserBO = class {
         return { sts: false, msg: "Error al actualizar el usuario" };
       }
     }    
+
+    async updateUserField(params) {
+      try {
+        const { field, fieldValue } = params;
+        
+        if (!field || !fieldValue ) {
+          return { sts: false, msg: "Faltan datos obligatorios" };
+        }
+        
+        if(field === 'username') {
+          const userResult = await database.executeQuery("security", "updateUserName", [
+            fieldValue,
+            ss.sessionObject.userId
+          ]);
+          if (!userResult || userResult.rowCount === 0) {
+            console.error("No se pudo actualizar el username");
+            return { sts: false, msg: "No se pudo actualizar el username" };
+          }
+      
+          return { sts: true, msg: "Username actualizado correctamente" };
+        }
+        
+      } catch (error) {
+        console.error("Error en updateUserField:", error);
+        return { sts: false, msg: "Error al actualizar el username" };
+      }
+    }
   
 async deleteUsers(params) {
   try {
