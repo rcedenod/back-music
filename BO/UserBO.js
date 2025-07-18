@@ -209,14 +209,33 @@ const UserBO = class {
       }
     }
   
+    async deleteUser(params) {
+      try{
+        const userResult = await database.executeQuery("security", "deleteUser", [
+            ss.sessionObject.userId
+          ]);
+
+          if (!userResult || userResult.rowCount === 0) {
+            console.error("No se pudo borrar el usuario");
+            return { sts: false, msg: "No se pudo borrar el usuario" };
+          }
+
+          return { sts: true, msg: "Usuario eliminado correctamente" };
+      } catch(error) {
+          console.error("Error en deleteUser:", error);
+          return { sts: false, msg: "Error al eliminar el usuario" };
+      }
+    }
+
 async deleteUsers(params) {
   try {
-    const { userId, personId } = params;
-    if (!userId || !personId) {
+    const { userId } = params;
+    if (!userId) {
       console.log("deleteUsers recibió params incorrectos:", params);
       return { sts: false, msg: "Faltan datos obligatorios" };
     }
 
+    /*
     // 1) Obtener todos los id_note del usuario
     const notesResult = await database.executeQuery(
       "public",
@@ -275,6 +294,7 @@ async deleteUsers(params) {
       "deleteUserProfileByUserId",
       [userId]
     );
+    */
 
     // 7) Borrar el usuario (entero)
     await database.executeQuery(
@@ -283,12 +303,13 @@ async deleteUsers(params) {
       [userId]
     );
 
-    // 8) Borrar la persona (entero)
+    /*
     await database.executeQuery(
       "public",
       "deletePerson",
       [personId]
     );
+    */
 
     return { sts: true, msg: "Usuario y sus dependencias eliminados correctamente" };
   } catch (error) {
@@ -296,8 +317,6 @@ async deleteUsers(params) {
     return { sts: false, msg: "Error al eliminar el usuario y sus datos" };
   }
 }
-
-
 
 };
   

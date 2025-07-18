@@ -75,7 +75,7 @@
             "updateUserProfile": "UPDATE security.user_profile SET fk_id_profile = $1 WHERE fk_id_user = $2",
             "deleteUserProfileByUserId": "DELETE FROM security.user_profile WHERE fk_id_user = $1",
 
-            "deleteUser": "DELETE FROM security.user WHERE id_user = $1",
+            "deleteUser": "update security.user set deleted = true where id_user = $1",
 
             "getUserById": "SELECT us.id_user, us.email, us.password, us.fk_id_person, us.username, per.name, per.last_name FROM security.user as us inner join person as per on us.fk_id_person = per.id_person WHERE id_user = $1 AND deleted = false",
             "getMenus": "SELECT me.id_menu, me.menu, mo.module, mo.id_module FROM security.menu me INNER JOIN security.module mo ON mo.id_module = me.fk_id_module",
