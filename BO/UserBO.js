@@ -126,17 +126,14 @@ const UserBO = class {
       }
     }    
 
-    async updateUserField(params) {
+    async updateUserName(params) {
       try {
-        const { field, fieldValue } = params;
-        
-        if (!field || !fieldValue ) {
+        if (!params.userName) {
           return { sts: false, msg: "Faltan datos obligatorios" };
         }
         
-        if(field === 'username') {
           const userResult = await database.executeQuery("security", "updateUserName", [
-            fieldValue,
+            params.userName,
             ss.sessionObject.userId
           ]);
           if (!userResult || userResult.rowCount === 0) {
@@ -145,10 +142,9 @@ const UserBO = class {
           }
       
           return { sts: true, msg: "Username actualizado correctamente" };
-        }
         
       } catch (error) {
-        console.error("Error en updateUserField:", error);
+        console.error("Error en updateUserName:", error);
         return { sts: false, msg: "Error al actualizar el username" };
       }
     }
