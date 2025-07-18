@@ -23,6 +23,20 @@ const UserBO = class {
       }
     }
   
+    async getUserById(params) {
+      try {
+        const result = await database.executeQuery("security", "getUserById", [ss.sessionObject.userId]);
+        if (!result || !result.rows) {
+          console.error("La consulta no devolvió resultados");
+          return { sts: false, msg: "Error al obtener usuario" };
+        }
+
+        return { sts: true, data: result.rows[0] };
+      } catch (error) {
+        console.error("Error en getUserById:", error);
+        return { sts: false, msg: "Error al ejecutar la consulta" };
+      }
+    }
 
     async createUser(params) {
       try {
@@ -146,6 +160,52 @@ const UserBO = class {
       } catch (error) {
         console.error("Error en updateUserName:", error);
         return { sts: false, msg: "Error al actualizar el username" };
+      }
+    }
+
+    async updateUserPassword(params) {
+      try {
+        if (!params.password) {
+          return { sts: false, msg: "Faltan datos obligatorios" };
+        }
+        
+          const userResult = await database.executeQuery("security", "updateUserPassword", [
+            params.password,
+            ss.sessionObject.userId
+          ]);
+          if (!userResult || userResult.rowCount === 0) {
+            console.error("No se pudo actualizar la contraseña");
+            return { sts: false, msg: "No se pudo actualizar el la contraseña" };
+          }
+      
+          return { sts: true, msg: "Contraseña actualizada correctamente" };
+        
+      } catch (error) {
+        console.error("Error en updateUserPassword:", error);
+        return { sts: false, msg: "Error al actualizar la contraseña" };
+      }
+    }
+
+    async updateUserEmail(params) {
+      try {
+        if (!params.email) {
+          return { sts: false, msg: "Faltan datos obligatorios" };
+        }
+        
+          const userResult = await database.executeQuery("security", "updateUserEmail", [
+            params.email,
+            ss.sessionObject.userId
+          ]);
+          if (!userResult || userResult.rowCount === 0) {
+            console.error("No se pudo actualizar el correo");
+            return { sts: false, msg: "No se pudo actualizar el correo" };
+          }
+      
+          return { sts: true, msg: "Correo actualizado correctamente" };
+        
+      } catch (error) {
+        console.error("Error en updateUserEmail:", error);
+        return { sts: false, msg: "Error al actualizar el correo" };
       }
     }
   
