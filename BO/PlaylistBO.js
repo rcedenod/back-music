@@ -33,66 +33,33 @@ const PlaylistBO = class {
       }
     }
 
-    async createUser(params) {
+    async createPlaylist(params) {
+       const userId = ss.sessionObject.userId;
+
       try {
         // Validar que existan todos los datos obligatorios
-        const { name, lastName, birthDate, email, password, userName} = params;
+        const { name } = params;
         
-        if (!name || !lastName || !birthDate || !email || !password || !userName) {
+        if (!name) {
           return { sts: false, msg: "Faltan datos obligatorios" };
         }
         console.log(params);
         
-        
-        // Insertar la persona en la tabla public.person
-        const personResult = await database.executeQuery("public", "createPerson", [
-          name,
-          lastName
+        const playlistResult = await database.executeQuery("public", "createPlaylist", [
+          name, userId
         ]);
-        if (!personResult || !personResult.rows || personResult.rows.length === 0) {
-          console.error("No se pudo crear la persona");
-          return { sts: false, msg: "No se pudo crear la persona" };
-        }
+        console.log("playlist: ", playlistResult);
         
-        // Obtener el id_person generado
-        const id_person = personResult.rows[0].id_person;
-        console.log(`Persona creada con id_person: ${id_person}`);
-        
-        // Insertar el usuario en la tabla security.user
-        const userResult = await database.executeQuery("security", "createUser", [
-          email,
-          password,
-          userName,
-          id_person
-        ]);
-        if (!(userResult && userResult.rowCount > 0)) {
-          return { sts: false, msg: "No se pudo crear el usuario" };
+        if (!playlistResult) {
+          console.error("No se pudo crear la playlist");
+          return { sts: false, msg: "No se pudo crear la playlist" };
         }
-  
-        // Obtener el id del usuario recién creado
-        const id_user = userResult.rows[0].id_user;
-  
-        // Insertar en la tabla user_profile para asignar los perfiles al usuario
-        let allInserted = true;
-        for (let profileId of id_profile) {
-          const userProfileResult = await database.executeQuery("security", "createUserProfile", [
-            id_user,
-            profileId
-          ]);
-          if (!(userProfileResult && userProfileResult.rowCount > 0)) {
-            allInserted = false;
-            console.error(`No se pudo asignar el perfil ${profileId} al usuario ${email}`);
-          }
-        }
-        if (allInserted) {
-          console.log(`El usuario: ${email} fue creado y asignado a los perfiles correctamente`);
-          return { sts: true, msg: "Usuario creado correctamente" };
-        } else {
-          return { sts: false, msg: "Usuario creado, pero no se pudo asignar uno o más perfiles" };
+        else {
+          return { sts: true, msg: "Playlist creada correctamente" };
         }
       } catch (error) {
-        console.error("Error en createUser:", error);
-        return { sts: false, msg: "Error al crear el usuario" };
+        console.error("Error en createPlaylist:", error);
+        return { sts: false, msg: "Error al crear la playlist" };
       }
     }
   

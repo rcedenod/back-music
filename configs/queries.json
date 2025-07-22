@@ -9,7 +9,8 @@
         "deletePerson": "DELETE FROM public.person WHERE id_person =  $1",
         "getPersonById": "SELECT * FROM public.person as p INNER JOIN security.user as u ON u.fk_id_person = p.id_person WHERE u.id_user = $1",
 
-        "getUserPlaylists": "SELECT * FROM public.playlist WHERE fk_id_user = $1"
+        "getUserPlaylists": "SELECT * FROM public.playlist WHERE fk_id_user = $1",
+        "createPlaylist": "INSERT INTO public.playlist (name, fk_id_user) VALUES ($1, $2)"
     },        
     "security": {
         "loadPermission" : "SELECT pr.id_profile, ob.id_object, ob.object, me.id_method, me.method FROM security.permission_method pm INNER JOIN security.profile pr ON pm.fk_id_profile = pr.id_profile INNER JOIN security.method me ON pm.fk_id_method = me.id_method INNER JOIN security.object ob ON me.fk_id_object = ob.id_object",

@@ -1,8 +1,8 @@
 {
     "config" : [{
         "database": "soundify",
-        "user": "postgres",
-        "password": "1597",
+        "user": "gabrielepicariello",
+        "password": "1313",
         "port": 5432
     }]
 }
