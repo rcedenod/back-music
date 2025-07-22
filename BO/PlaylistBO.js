@@ -18,17 +18,23 @@ const PlaylistBO = class {
       }
     }
   
-    async getUserById(params) {
+    async getPlaylistDetailsAndSongs(params) {
       try {
-        const result = await database.executeQuery("security", "getUserById", [ss.sessionObject.userId]);
-        if (!result || !result.rows) {
-          console.error("La consulta no devolvió resultados");
-          return { sts: false, msg: "Error al obtener usuario" };
+        const { playlistId } = params;
+
+        if (!playlistId) {
+          return { sts: false, msg: "Faltan datos obligatorios" };
         }
 
-        return { sts: true, data: result.rows[0] };
+        const result = await database.executeQuery("public", "getPlaylistDetailsAndSongs", [playlistId]);
+        if (!result || !result.rows) {
+          console.error("La consulta no devolvió resultados");
+          return { sts: false, msg: "Error al obtener canciones de la playlist" };
+        }
+
+        return { sts: true, data: result.rows };
       } catch (error) {
-        console.error("Error en getUserById:", error);
+        console.error("Error en getPlaylistDetailsAndSongs:", error);
         return { sts: false, msg: "Error al ejecutar la consulta" };
       }
     }
@@ -46,7 +52,7 @@ const PlaylistBO = class {
         console.log(params);
         
         const playlistResult = await database.executeQuery("public", "createPlaylist", [
-          name, userId
+          name, userId, false
         ]);
         console.log("playlist: ", playlistResult);
         
