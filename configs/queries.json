@@ -11,9 +11,12 @@
 
         "getUserPlaylists": "SELECT * FROM public.playlist WHERE fk_id_user = $1 AND deleted = false",
         "createPlaylist": "INSERT INTO public.playlist (name, fk_id_user, deleted) VALUES ($1, $2, $3)",
-        "getPlaylistDetailsAndSongs": "SELECT p.id_playlist, p.name AS playlist_name, p.fk_id_user, t.id_track, t.name AS track_name, t.link, t.cover FROM playlist AS p LEFT JOIN playlist_track AS pt ON p.id_playlist = pt.fk_id_playlist LEFT JOIN track AS t ON pt.fk_id_track = t.id_track WHERE p.id_playlist = $1",
+        "getPlaylistDetailsAndSongs": "SELECT p.id_playlist, p.name AS playlist_name, p.fk_id_user, t.id_track, t.name AS track_name, t.link, t.cover FROM playlist AS p inner JOIN playlist_track AS pt ON p.id_playlist = pt.fk_id_playlist inner JOIN track AS t ON pt.fk_id_track = t.id_track WHERE p.id_playlist = $1",
         "updatePlaylistName": "UPDATE public.playlist SET name = $2 WHERE id_playlist = $1",
-        "deletePlaylist": "UPDATE public.playlist SET deleted = true WHERE id_playlist = $1"
+        "deletePlaylist": "UPDATE public.playlist SET deleted = true WHERE id_playlist = $1",
+
+        "createTrack": "INSERT INTO track (name, link, cover) VALUES ($1, $2, $3) ON CONFLICT (link) DO UPDATE SET name = EXCLUDED.name RETURNING id_track;",
+        "addToPlaylist": "INSERT INTO playlist_track(fk_id_playlist, fk_id_track) values($1, $2)"
     },        
     "security": {
         "loadPermission" : "SELECT pr.id_profile, ob.id_object, ob.object, me.id_method, me.method FROM security.permission_method pm INNER JOIN security.profile pr ON pm.fk_id_profile = pr.id_profile INNER JOIN security.method me ON pm.fk_id_method = me.id_method INNER JOIN security.object ob ON me.fk_id_object = ob.id_object",

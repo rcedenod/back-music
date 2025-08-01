@@ -117,6 +117,49 @@ const PlaylistBO = class {
       }
     }
 
+    async addToPlaylist(params) {
+      try {
+          const { playlistId, trackName, trackLink, trackCover } = params;
+          
+          if (!playlistId || !trackName || !trackCover || !trackLink ) {
+            return { sts: false, msg: "Faltan datos obligatorios" };
+          }
+
+          const trackResult = await database.executeQuery("public", "createTrack", [
+            trackName, trackLink, trackCover
+          ]);
+          
+          if (!trackResult) {
+            console.error("No se pudo crear la cancion");
+            return { sts: false, msg: "No se pudo crear la cancion" };
+          }
+
+          console.log(trackResult.rows);
+
+          const newTrackId = trackResult.rows[0].id_track;
+
+          if (!newTrackId) {
+            console.error("No se pudo crear la canción o obtener su ID.");
+            return { sts: false, msg: "No se pudo crear la canción." };
+          }
+
+          const playlistResult = await database.executeQuery("public", "addToPlaylist", [
+            playlistId, newTrackId
+          ]);
+          
+          if (!playlistResult) {
+            console.error("No se pudo crear la playlist");
+            return { sts: false, msg: "No se pudo crear la playlist" };
+          }
+
+          return { sts: true, msg: "Cancion añadida a la playlist correctamente" };
+
+        } catch (error) {
+          console.error("Error en addToPlaylist:", error);
+          return { sts: false, msg: "Error al añadir a playlist" };
+        }
+    }
+
 };
   
 module.exports = PlaylistBO;
