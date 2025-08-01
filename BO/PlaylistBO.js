@@ -119,14 +119,14 @@ const PlaylistBO = class {
 
     async addToPlaylist(params) {
       try {
-          const { playlistId, trackName, trackLink, trackCover } = params;
+          const { playlistId, trackName, trackLink, trackCover, trackArtist } = params;
           
           if (!playlistId || !trackName || !trackCover || !trackLink ) {
             return { sts: false, msg: "Faltan datos obligatorios" };
           }
 
           const trackResult = await database.executeQuery("public", "createTrack", [
-            trackName, trackLink, trackCover
+            trackName, trackLink, trackCover, trackArtist
           ]);
           
           if (!trackResult) {

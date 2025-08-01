@@ -15,7 +15,9 @@
         "updatePlaylistName": "UPDATE public.playlist SET name = $2 WHERE id_playlist = $1",
         "deletePlaylist": "UPDATE public.playlist SET deleted = true WHERE id_playlist = $1",
 
-        "createTrack": "INSERT INTO track (name, link, cover) VALUES ($1, $2, $3) ON CONFLICT (link) DO UPDATE SET name = EXCLUDED.name RETURNING id_track;",
+        "getMySongs": "SELECT t.id_track, t.name, t.cover, t.link, t.artist FROM public.track as t inner join user_track as ut on ut.fk_id_track = t.id_track WHERE ut.fk_id_user = $1",
+        "addMySong": "insert into user_track(fk_id_user, fk_id_track) values ($2,$1)",
+        "createTrack": "INSERT INTO track (name, link, cover, artist) VALUES ($1, $2, $3, $4) ON CONFLICT (link) DO UPDATE SET name = EXCLUDED.name RETURNING id_track;",
         "addToPlaylist": "INSERT INTO playlist_track(fk_id_playlist, fk_id_track) values($1, $2)"
     },        
     "security": {
